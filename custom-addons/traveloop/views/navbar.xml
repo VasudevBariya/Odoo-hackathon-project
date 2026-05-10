@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!--
+        Reusable Top Navbar
+        Use:  <t t-call="traveloop.traveloop_navbar"/>
+        Pass active link with: <t t-set="active_nav" t-value="'dashboard'"/>
+    -->
+    <template id="traveloop_navbar" name="Traveloop Navbar">
+        <nav class="tl-navbar">
+            <a href="/traveloop/dashboard" class="tl-logo">
+                <span class="tl-logo-amber">Travel</span><span class="tl-logo-white">oop</span>
+            </a>
+
+            <div class="nav-links">
+                <a href="/traveloop/dashboard"
+                   t-att-class="'active' if active_nav == 'dashboard' else ''">Dashboard</a>
+                <a href="/traveloop/trips"
+                   t-att-class="'active' if active_nav == 'trips' else ''">My Trips</a>
+                <a href="/traveloop/budget"
+                   t-att-class="'active' if active_nav == 'budget' else ''">Budget</a>
+                <a href="/traveloop/checklist"
+                   t-att-class="'active' if active_nav == 'checklist' else ''">Checklist</a>
+                <a href="/traveloop/notes"
+                   t-att-class="'active' if active_nav == 'notes' else ''">Notes</a>
+            </div>
+
+            <div class="tl-nav-icons">
+                <button class="icon-btn" title="Search">
+                    <i class="fa-solid fa-magnifying-glass"/>
+                </button>
+                <button class="icon-btn" title="Notifications">
+                    <i class="fa-solid fa-bell"/>
+                    <span class="tl-bell-dot"/>
+                </button>
+                <span class="tl-avatar"
+                      t-esc="(user_initials or 'U')"/>
+            </div>
+        </nav>
+    </template>
+</odoo>

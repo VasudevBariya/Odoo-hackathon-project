@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Trip Notes / Journal — two-panel list + editor -->
+    <template id="traveloop_trip_notes" name="Traveloop Trip Notes">
+        <t t-call="web.layout">
+            <t t-set="head">
+                <link rel="stylesheet"
+                      href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&amp;family=DM+Sans:wght@300;400;500;600&amp;display=swap"/>
+                <link rel="stylesheet"
+                      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+                <link rel="stylesheet" href="/traveloop/static/src/css/traveloop.css"/>
+            </t>
+            <body class="traveloop-page">
+                <t t-set="active_nav" t-value="'notes'"/>
+                <t t-call="traveloop.traveloop_navbar"/>
+
+                <div class="tl-page-wrap container-fluid" style="max-width: 1280px;">
+                    <h1 class="section-title">Trip Notes</h1>
+
+                    <div class="tl-notes-layout">
+                        <!-- Left: notes list -->
+                        <div class="tl-notes-list">
+                            <select style="width:100%; padding: 10px 14px; border-radius:12px; border:1px solid var(--border); margin-bottom:12px;">
+                                <t t-foreach="trips or []" t-as="t">
+                                    <option t-att-value="t.id" t-esc="t.trip_name"/>
+                                </t>
+                            </select>
+                            <button type="button" class="btn-amber" style="width:100%; margin-bottom:12px;">+ New Note</button>
+
+                            <t t-foreach="notes or []" t-as="n">
+                                <div t-attf-class="tl-note-card #{active_note and n.id == active_note.id and 'active' or ''}"
+                                     data-tl-open-note="1">
+                                    <div class="tl-note-title" t-esc="n.title"/>
+                                    <div class="tl-note-preview" t-esc="(n.note or '')[:60] + ('...' if n.note and len(n.note) > 60 else '')"/>
+                                    <div class="tl-note-time" t-esc="n.created_at"/>
+                                </div>
+                            </t>
+                        </div>
+
+                        <!-- Right: editor -->
+                        <div class="tl-note-editor">
+                            <div style="display:flex; justify-content:space-between; align-items:center;">
+                                <button type="button" class="icon-btn" data-tl-back-list="1"
+                                        style="color:var(--muted); display:none;">
+                                    <i class="fa-solid fa-arrow-left"/> Back
+                                </button>
+                                <span><span class="tl-unsaved"/>Unsaved changes</span>
+                            </div>
+
+                            <input type="text" class="tl-note-title-input"
+                                   placeholder="Note title..."
+                                   t-att-value="active_note and active_note.title or ''"/>
+
+                            <select style="margin-bottom: 14px; padding: 8px 12px; border-radius:10px; border:1px solid var(--border); width:auto;">
+                                <option>Select trip...</option>
+                                <t t-foreach="trips or []" t-as="t">
+                                    <option t-att-value="t.id" t-esc="t.trip_name"/>
+                                </t>
+                            </select>
+
+                            <textarea class="tl-note-textarea" placeholder="Start writing your travel memories...">
+                                <t t-esc="active_note and active_note.note or ''"/>
+                            </textarea>
+
+                            <div style="display:flex; justify-content:space-between; align-items:center; margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--border);">
+                                <span style="color:var(--muted); font-size:0.8rem;">
+                                    <t t-if="active_note">Created <t t-esc="active_note.created_at"/></t>
+                                </span>
+                                <div style="display:flex; gap:10px;">
+                                    <button type="button" class="btn-outline-amber"
+                                            style="color:var(--danger); border-color:var(--danger);"
+                                            data-tl-confirm-delete="Delete this note?">
+                                        <i class="fa-solid fa-trash"/> Delete
+                                    </button>
+                                    <button type="button" class="btn-amber">Save</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <script src="/traveloop/static/src/js/traveloop.js"/>
+            </body>
+        </t>
+    </template>
+</odoo>

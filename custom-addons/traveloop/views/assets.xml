@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="traveloop_assets" inherit_id="web.assets_backend">
+        <xpath expr="." position="inside">
+            <link rel="stylesheet"
+                  href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&amp;family=DM+Sans:wght@300;400;500;600&amp;display=swap"/>
+            <link rel="stylesheet"
+                  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+            <link rel="stylesheet" type="text/css"
+                  href="/traveloop/static/src/css/traveloop.css"/>
+            <script type="text/javascript"
+                    src="/traveloop/static/src/js/traveloop.js"/>
+        </xpath>
+    </template>
+</odoo>

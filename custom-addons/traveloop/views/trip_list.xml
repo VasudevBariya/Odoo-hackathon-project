@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- My Trips list -->
+    <template id="traveloop_trip_list" name="Traveloop My Trips">
+        <t t-call="web.layout">
+            <t t-set="head">
+                <link rel="stylesheet"
+                      href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&amp;family=DM+Sans:wght@300;400;500;600&amp;display=swap"/>
+                <link rel="stylesheet"
+                      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+                <link rel="stylesheet" href="/traveloop/static/src/css/traveloop.css"/>
+            </t>
+            <body class="traveloop-page">
+                <t t-set="active_nav" t-value="'trips'"/>
+                <t t-call="traveloop.traveloop_navbar"/>
+
+                <div class="tl-page-wrap container-fluid" style="max-width: 1280px;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 24px;">
+                        <h1 class="section-title" style="margin:0;">My Trips</h1>
+                        <a href="/traveloop/trips/new" class="btn-amber">+ New Trip</a>
+                    </div>
+
+                    <!-- Filter tabs -->
+                    <div class="tl-filter-tabs">
+                        <button type="button" class="active" data-filter="all">All</button>
+                        <button type="button" data-filter="draft">Draft</button>
+                        <button type="button" data-filter="planned">Planned</button>
+                        <button type="button" data-filter="completed">Completed</button>
+                    </div>
+
+                    <!-- Search -->
+                    <div class="tl-input-group" style="max-width: 360px; margin-bottom: 24px;">
+                        <i class="fa-solid fa-magnifying-glass tl-icon"/>
+                        <input type="text" placeholder="Search trips..."/>
+                    </div>
+
+                    <!-- Trips grid OR empty state -->
+                    <t t-if="trips and len(trips) > 0">
+                        <div class="tl-trip-grid">
+                            <t t-foreach="trips" t-as="trip">
+                                <div class="tl-trip-card animate-in">
+                                    <div t-attf-class="tl-trip-cover cover-#{trip.status}">
+                                        <span t-attf-class="tl-badge badge-#{trip.status}" t-esc="trip.status"/>
+                                        <span>🌍</span>
+                                    </div>
+                                    <div class="tl-trip-body">
+                                        <h4 t-field="trip.trip_name"/>
+                                        <div style="font-size:0.85rem; color:var(--muted);">
+                                            <i class="fa-solid fa-location-dot"/> <t t-esc="trip.destination"/>
+                                        </div>
+                                        <div style="font-size:0.8rem; color:var(--muted); margin-top:4px;">
+                                            <t t-esc="trip.start_date"/> — <t t-esc="trip.end_date"/>
+                                        </div>
+                                        <div style="margin: 8px 0;">
+                                            <span class="tl-qty-badge"><t t-esc="trip.duration_days"/> days</span>
+                                        </div>
+                                        <div class="tl-progress" t-att-data-tl-budget="1"
+                                             t-att-data-spent="trip.total_spent"
+                                             t-att-data-total="trip.total_budget">
+                                            <div class="tl-progress-fill"/>
+                                        </div>
+                                        <div class="tl-trip-budget-text">
+                                            ₹<t t-esc="trip.total_spent"/> / ₹<t t-esc="trip.total_budget"/>
+                                            • <t t-esc="len(trip.stop_ids)"/> stops
+                                        </div>
+                                    </div>
+                                    <div class="tl-trip-footer">
+                                        <a t-attf-href="/traveloop/trips/#{trip.id}" class="btn-navy" style="flex:1;">
+                                            <i class="fa-regular fa-eye"/> View
+                                        </a>
+                                        <a t-attf-href="/traveloop/trips/#{trip.id}/edit"
+                                           class="icon-btn" style="color: var(--muted);">
+                                            <i class="fa-solid fa-pen"/>
+                                        </a>
+                                        <a t-attf-href="/traveloop/trips/#{trip.id}/delete"
+                                           class="icon-btn" style="color: var(--danger);"
+                                           data-tl-confirm-delete="Delete this trip permanently?">
+                                            <i class="fa-solid fa-trash"/>
+                                        </a>
+                                    </div>
+                                </div>
+                            </t>
+                        </div>
+                    </t>
+                    <t t-else="">
+                        <div class="tl-empty">
+                            <div class="tl-empty-emoji">✈️</div>
+                            <h3>No trips yet!</h3>
+                            <p>Start planning your next adventure.</p>
+                            <a href="/traveloop/trips/new" class="btn-amber">Plan your first adventure →</a>
+                        </div>
+                    </t>
+                </div>
+
+                <script src="/traveloop/static/src/js/traveloop.js"/>
+            </body>
+        </t>
+    </template>
+</odoo>

@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Login / Signup screen -->
+    <template id="traveloop_login" name="Traveloop Login">
+        <html>
+            <head>
+                <meta charset="utf-8"/>
+                <meta name="viewport" content="width=device-width, initial-scale=1"/>
+                <title>Traveloop — Login</title>
+                <link rel="stylesheet"
+                      href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&amp;family=DM+Sans:wght@300;400;500;600&amp;display=swap"/>
+                <link rel="stylesheet"
+                      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+                <link rel="stylesheet" href="/traveloop/static/src/css/traveloop.css"/>
+            </head>
+            <body class="traveloop-page">
+                <div class="tl-login-bg">
+                    <div class="tl-login-card">
+                        <div class="text-center" style="margin-bottom: 18px;">
+                            <div class="tl-logo" style="font-size: 2rem;">
+                                <span class="tl-logo-amber">Travel</span><span class="tl-logo-navy">oop</span>
+                            </div>
+                            <p style="color: var(--muted); font-size: 0.9rem; margin: 4px 0 0;">
+                                Plan your journey, one stop at a time
+                            </p>
+                        </div>
+
+                        <!-- Tab toggle -->
+                        <div class="tl-tabs">
+                            <button type="button" data-tl-tab="login"  class="active">LOGIN</button>
+                            <button type="button" data-tl-tab="signup">SIGNUP</button>
+                        </div>
+
+                        <!-- LOGIN pane -->
+                        <form data-tl-pane="login" action="/traveloop/login" method="post">
+                            <div class="tl-input-group">
+                                <i class="fa-solid fa-envelope tl-icon"/>
+                                <input type="email" name="email" placeholder="Email" required="required"/>
+                            </div>
+                            <div class="tl-input-group">
+                                <i class="fa-solid fa-lock tl-icon"/>
+                                <input type="password" id="login_password" name="password"
+                                       placeholder="Password" required="required"/>
+                                <button type="button" class="tl-toggle"
+                                        data-tl-toggle-pw="login_password">
+                                    <i class="fa-solid fa-eye"/>
+                                </button>
+                            </div>
+                            <div style="text-align:right; margin-bottom: 16px;">
+                                <a href="/traveloop/forgot" style="font-size: 0.85rem;">Forgot Password?</a>
+                            </div>
+                            <button type="submit" class="btn-amber" style="width:100%;">Login</button>
+
+                            <div style="text-align:center; color: var(--muted); margin: 18px 0; font-size: 0.85rem;">
+                                — or —
+                            </div>
+                            <button type="button" class="btn-outline-amber" style="width:100%;">
+                                <i class="fa-brands fa-google" style="margin-right: 8px;"/>
+                                Continue with Google
+                            </button>
+                        </form>
+
+                        <!-- SIGNUP pane -->
+                        <form data-tl-pane="signup" style="display:none;"
+                              action="/traveloop/signup" method="post">
+                            <div class="tl-input-group">
+                                <i class="fa-solid fa-user tl-icon"/>
+                                <input type="text" name="name" placeholder="Full Name" required="required"/>
+                            </div>
+                            <div class="tl-input-group">
+                                <i class="fa-solid fa-envelope tl-icon"/>
+                                <input type="email" name="email" placeholder="Email" required="required"/>
+                            </div>
+                            <div class="tl-input-group">
+                                <i class="fa-solid fa-phone tl-icon"/>
+                                <input type="tel" name="phone" placeholder="Phone (10 digits)"
+                                       pattern="[0-9]{10}" maxlength="10"/>
+                            </div>
+                            <div class="tl-input-group">
+                                <i class="fa-solid fa-city tl-icon"/>
+                                <input type="text" name="city" placeholder="City"/>
+                            </div>
+                            <div class="tl-input-group">
+                                <i class="fa-solid fa-lock tl-icon"/>
+                                <input type="password" id="signup_password" name="password"
+                                       placeholder="Password" required="required"/>
+                                <button type="button" class="tl-toggle"
+                                        data-tl-toggle-pw="signup_password">
+                                    <i class="fa-solid fa-eye"/>
+                                </button>
+                            </div>
+                            <div class="tl-input-group">
+                                <i class="fa-solid fa-lock tl-icon"/>
+                                <input type="password" name="confirm_password"
+                                       placeholder="Confirm Password" required="required"/>
+                            </div>
+                            <button type="submit" class="btn-amber" style="width:100%;">Sign Up</button>
+                        </form>
+                    </div>
+                </div>
+                <script src="/traveloop/static/src/js/traveloop.js"/>
+            </body>
+        </html>
+    </template>
+</odoo>

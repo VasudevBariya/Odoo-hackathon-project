@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Create / Edit trip form -->
+    <template id="traveloop_trip_form" name="Traveloop Trip Form">
+        <t t-call="web.layout">
+            <t t-set="head">
+                <link rel="stylesheet"
+                      href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&amp;family=DM+Sans:wght@300;400;500;600&amp;display=swap"/>
+                <link rel="stylesheet"
+                      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+                <link rel="stylesheet" href="/traveloop/static/src/css/traveloop.css"/>
+            </t>
+            <body class="traveloop-page">
+                <t t-set="active_nav" t-value="'trips'"/>
+                <t t-call="traveloop.traveloop_navbar"/>
+
+                <div class="tl-page-wrap container-fluid">
+                    <form class="tl-form-card animate-in" method="post"
+                          t-att-action="trip and '/traveloop/trips/%s/save' % trip.id or '/traveloop/trips/save'">
+                        <h1 class="section-title" style="margin-top:0;">
+                            <t t-if="trip">Edit Trip — <t t-esc="trip.trip_name"/></t>
+                            <t t-else="">Create New Trip</t>
+                        </h1>
+
+                        <!-- Cover photo -->
+                        <div class="tl-cover-upload">
+                            <div style="text-align:center;">
+                                <i class="fa-solid fa-image" style="font-size:2rem;"/>
+                                <div>Click to upload cover photo</div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="tl-field">
+                                    <label>Trip Name *</label>
+                                    <input type="text" name="trip_name" required="required"
+                                           t-att-value="trip and trip.trip_name or ''"/>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="tl-field">
+                                    <label>Main Destination / Country</label>
+                                    <input type="text" name="destination"
+                                           t-att-value="trip and trip.destination or ''"/>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="tl-field">
+                                    <label>Start Date</label>
+                                    <input type="date" id="tl_start_date" name="start_date"
+                                           t-att-value="trip and trip.start_date or ''"/>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="tl-field">
+                                    <label>End Date</label>
+                                    <input type="date" id="tl_end_date" name="end_date"
+                                           t-att-value="trip and trip.end_date or ''"/>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="tl-field">
+                                    <label>Duration</label>
+                                    <div id="tl_duration_display"
+                                         style="padding:12px 14px; background: var(--bg); border-radius:12px; font-weight:600;">
+                                        <t t-if="trip">📅 <t t-esc="trip.duration_days"/> days</t>
+                                        <t t-else="">📅 — days</t>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="tl-field">
+                                    <label>Total Budget</label>
+                                    <input type="number" name="total_budget" step="0.01" min="0"
+                                           placeholder="₹ 0.00"
+                                           t-att-value="trip and trip.total_budget or ''"/>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="tl-field">
+                                    <label>Status</label>
+                                    <select name="status">
+                                        <option value="draft">Draft</option>
+                                        <option value="planned">Planned</option>
+                                        <option value="completed">Completed</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Stops -->
+                        <hr/>
+                        <div style="display:flex; justify-content:space-between; align-items:center;">
+                            <h3 class="section-title" style="margin:0;">Trip Stops</h3>
+                            <button type="button" class="btn-outline-amber">+ Add Stop</button>
+                        </div>
+                        <div style="margin: 16px 0;">
+                            <t t-if="trip">
+                                <t t-foreach="trip.stop_ids" t-as="stop">
+                                    <span class="tl-pill">
+                                        <i class="fa-solid fa-location-dot"/>
+                                        <strong t-esc="stop.city_name"/>
+                                        <small><t t-esc="stop.arrival_date"/> → <t t-esc="stop.departure_date"/></small>
+                                        <button type="button" data-tl-confirm-delete="Remove this stop?">✕</button>
+                                    </span>
+                                </t>
+                            </t>
+                        </div>
+
+                        <!-- Activities -->
+                        <hr/>
+                        <div style="display:flex; justify-content:space-between; align-items:center;">
+                            <h3 class="section-title" style="margin:0;">Activities</h3>
+                            <button type="button" class="btn-outline-amber">+ Add Activity</button>
+                        </div>
+                        <div style="margin: 16px 0;">
+                            <t t-if="trip">
+                                <t t-foreach="trip.activity_ids" t-as="act">
+                                    <div class="tl-check-row">
+                                        <span style="font-size:1.2rem;">
+                                            <t t-if="act.category == 'sightseeing'">📷</t>
+                                            <t t-if="act.category == 'adventure'">🏔️</t>
+                                            <t t-if="act.category == 'food'">🍜</t>
+                                            <t t-if="act.category == 'other'">⚡</t>
+                                        </span>
+                                        <span class="tl-check-name" t-esc="act.activity_name"/>
+                                        <span class="tl-qty-badge">₹<t t-esc="act.estimated_cost"/></span>
+                                    </div>
+                                </t>
+                            </t>
+                        </div>
+
+                        <hr/>
+                        <div style="display:flex; gap:12px; justify-content:flex-end;">
+                            <a href="/traveloop/trips" class="btn-outline-amber" style="border-color:var(--muted); color:var(--muted);">Cancel</a>
+                            <button type="submit" class="btn-amber">Save Trip</button>
+                        </div>
+                    </form>
+                </div>
+
+                <script src="/traveloop/static/src/js/traveloop.js"/>
+            </body>
+        </t>
+    </template>
+</odoo>

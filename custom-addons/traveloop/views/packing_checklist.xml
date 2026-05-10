@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Packing Checklist -->
+    <template id="traveloop_packing_checklist" name="Traveloop Packing Checklist">
+        <t t-call="web.layout">
+            <t t-set="head">
+                <link rel="stylesheet"
+                      href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&amp;family=DM+Sans:wght@300;400;500;600&amp;display=swap"/>
+                <link rel="stylesheet"
+                      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+                <link rel="stylesheet" href="/traveloop/static/src/css/traveloop.css"/>
+            </t>
+            <body class="traveloop-page">
+                <t t-set="active_nav" t-value="'checklist'"/>
+                <t t-call="traveloop.traveloop_navbar"/>
+
+                <div class="tl-page-wrap container-fluid" style="max-width: 900px;">
+                    <h1 class="section-title">Packing Checklist</h1>
+
+                    <div style="display:flex; gap:12px; justify-content:space-between; align-items:center; margin-bottom:24px; flex-wrap:wrap;">
+                        <select style="padding: 10px 16px; border-radius:50px; border:1px solid var(--border); background:#fff;">
+                            <t t-foreach="trips or []" t-as="t">
+                                <option t-att-value="t.id" t-esc="t.trip_name"/>
+                            </t>
+                        </select>
+                        <div style="display:flex; gap:10px;">
+                            <button type="button" class="btn-amber" data-bs-toggle="modal" data-bs-target="#tlAddItemModal">+ Add Item</button>
+                            <button type="button" class="btn-outline-amber" style="color:var(--danger); border-color:var(--danger);"
+                                    data-tl-confirm-delete="Reset all items?">Reset All</button>
+                        </div>
+                    </div>
+
+                    <!-- Progress -->
+                    <div class="tl-card" style="padding:20px; margin-bottom:24px;">
+                        <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
+                            <strong>
+                                <t t-esc="packed_count or 0"/> of <t t-esc="total_count or 0"/> items packed
+                            </strong>
+                            <span style="color:var(--muted);">
+                                <t t-if="total_count and total_count > 0">
+                                    <t t-esc="int((packed_count / total_count) * 100)"/>%
+                                </t>
+                                <t t-else="">0%</t>
+                            </span>
+                        </div>
+                        <div class="tl-progress">
+                            <div class="tl-progress-fill"
+                                 t-attf-style="width: #{total_count and int((packed_count / total_count) * 100) or 0}%;"/>
+                        </div>
+                    </div>
+
+                    <!-- Items list -->
+                    <t t-if="items and len(items) > 0">
+                        <t t-foreach="items" t-as="item">
+                            <div t-attf-class="tl-check-row #{item.is_packed and 'packed' or ''}">
+                                <input type="checkbox" t-att-checked="item.is_packed and 'checked' or None"
+                                       style="width:20px; height:20px; accent-color: var(--green);"/>
+                                <span class="tl-check-name" t-esc="item.item_name"/>
+                                <span class="tl-qty-badge">×<t t-esc="item.quantity"/></span>
+                                <button type="button" class="icon-btn" style="color:var(--danger);"
+                                        data-tl-confirm-delete="Delete this item?">
+                                    <i class="fa-solid fa-trash"/>
+                                </button>
+                            </div>
+                        </t>
+                    </t>
+                    <t t-else="">
+                        <div class="tl-empty">
+                            <div class="tl-empty-emoji">🎒</div>
+                            <h3>Your bag is empty</h3>
+                            <p>Add items to start your packing list.</p>
+                        </div>
+                    </t>
+                </div>
+
+                <!-- Add Item Modal -->
+                <div class="modal fade" id="tlAddItemModal" tabindex="-1">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content" style="border-radius:20px;">
+                            <form method="post" action="/traveloop/checklist/save">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">Add Packing Item</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"/>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="tl-field">
+                                        <label>Item Name *</label>
+                                        <input type="text" name="item_name" required="required"/>
+                                    </div>
+                                    <div class="tl-field">
+                                        <label>Quantity</label>
+                                        <input type="number" name="quantity" value="1" min="1" max="100"/>
+                                    </div>
+                                    <div class="tl-field">
+                                        <label>Category (optional)</label>
+                                        <div>
+                                            <span class="tl-pill">👕 Clothing</span>
+                                            <span class="tl-pill">📄 Docs</span>
+                                            <span class="tl-pill">🔌 Electronics</span>
+                                            <span class="tl-pill">🧴 Toiletries</span>
+                                            <span class="tl-pill">📦 Other</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn-outline-amber" data-bs-dismiss="modal">Cancel</button>
+                                    <button type="submit" class="btn-amber">Save</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <script src="/traveloop/static/src/js/traveloop.js"/>
+            </body>
+        </t>
+    </template>
+</odoo>

@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Itinerary Builder — manage stops + activities for one trip -->
+    <template id="traveloop_itinerary_builder" name="Traveloop Itinerary Builder">
+        <t t-call="web.layout">
+            <t t-set="head">
+                <link rel="stylesheet"
+                      href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&amp;family=DM+Sans:wght@300;400;500;600&amp;display=swap"/>
+                <link rel="stylesheet"
+                      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+                <link rel="stylesheet" href="/traveloop/static/src/css/traveloop.css"/>
+            </t>
+            <body class="traveloop-page">
+                <t t-set="active_nav" t-value="'trips'"/>
+                <t t-call="traveloop.traveloop_navbar"/>
+
+                <div class="tl-page-wrap container-fluid" style="max-width: 1100px;">
+                    <h1 class="section-title">
+                        Itinerary —
+                        <t t-if="trip"><t t-esc="trip.trip_name"/></t>
+                    </h1>
+                    <p style="color:var(--muted);">Plan your stops and activities day by day.</p>
+
+                    <!-- Stops timeline -->
+                    <div class="tl-card" style="padding: 24px; margin-bottom: 24px;">
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+                            <h3 class="section-title" style="margin:0;">Stops</h3>
+                            <button type="button" class="btn-amber">+ Add Stop</button>
+                        </div>
+
+                        <t t-if="trip">
+                            <t t-foreach="trip.stop_ids" t-as="stop">
+                                <div class="tl-card" style="padding:18px; margin-bottom:14px;">
+                                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                                        <div>
+                                            <h4 style="margin:0;">
+                                                <i class="fa-solid fa-location-dot" style="color:var(--amber);"/>
+                                                <span t-esc="stop.city_name"/>
+                                            </h4>
+                                            <div style="color:var(--muted); font-size:0.85rem;">
+                                                <t t-esc="stop.arrival_date"/> → <t t-esc="stop.departure_date"/>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <button type="button" class="icon-btn" style="color:var(--muted);"><i class="fa-solid fa-pen"/></button>
+                                            <button type="button" class="icon-btn" style="color:var(--danger);"
+                                                    data-tl-confirm-delete="Remove this stop?">
+                                                <i class="fa-solid fa-trash"/>
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <!-- Activities under this stop -->
+                                    <div style="margin-top: 14px;">
+                                        <t t-foreach="trip.activity_ids" t-as="act">
+                                            <t t-if="act.stop_id and act.stop_id.id == stop.id">
+                                                <div class="tl-check-row">
+                                                    <span style="font-size:1.1rem;">
+                                                        <t t-if="act.category == 'sightseeing'">📷</t>
+                                                        <t t-if="act.category == 'adventure'">🏔️</t>
+                                                        <t t-if="act.category == 'food'">🍜</t>
+                                                        <t t-if="act.category == 'other'">⚡</t>
+                                                    </span>
+                                                    <span class="tl-check-name" t-esc="act.activity_name"/>
+                                                    <span class="tl-qty-badge">₹<t t-esc="act.estimated_cost"/></span>
+                                                </div>
+                                            </t>
+                                        </t>
+                                        <button type="button" class="btn-outline-amber" style="margin-top:10px;">
+                                            + Add Activity
+                                        </button>
+                                    </div>
+                                </div>
+                            </t>
+                        </t>
+                    </div>
+                </div>
+
+                <script src="/traveloop/static/src/js/traveloop.js"/>
+            </body>
+        </t>
+    </template>
+</odoo>

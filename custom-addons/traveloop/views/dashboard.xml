@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Dashboard / Home -->
+    <template id="traveloop_dashboard" name="Traveloop Dashboard">
+        <t t-call="web.layout">
+            <t t-set="head">
+                <link rel="stylesheet"
+                      href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&amp;family=DM+Sans:wght@300;400;500;600&amp;display=swap"/>
+                <link rel="stylesheet"
+                      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+                <link rel="stylesheet" href="/traveloop/static/src/css/traveloop.css"/>
+            </t>
+            <body class="traveloop-page">
+                <t t-set="active_nav" t-value="'dashboard'"/>
+                <t t-call="traveloop.traveloop_navbar"/>
+
+                <div class="tl-page-wrap container-fluid" style="max-width: 1280px;">
+
+                    <!-- A. Hero Banner -->
+                    <section class="tl-hero animate-in">
+                        <span class="tl-hero-emoji">✈</span>
+                        <h1>Good morning, <t t-esc="user_name or 'Traveler'"/>! ✈️</h1>
+                        <p>You have <t t-esc="upcoming_count or 0"/> upcoming trips</p>
+                        <a href="/traveloop/trips/new" class="btn-amber">+ Plan New Trip</a>
+
+                        <!-- B. Stats Row -->
+                        <div class="tl-stats-grid" style="margin-top: 32px;">
+                            <div class="tl-stat">
+                                <div class="tl-stat-icon" style="background: rgba(245,166,35,0.2); color: var(--amber);">
+                                    <i class="fa-solid fa-suitcase-rolling"/>
+                                </div>
+                                <div class="tl-stat-value"><t t-esc="total_trips or 0"/></div>
+                                <div class="tl-stat-label">Total Trips</div>
+                            </div>
+                            <div class="tl-stat">
+                                <div class="tl-stat-icon" style="background: rgba(39,174,96,0.2); color: var(--green);">
+                                    <i class="fa-solid fa-plane"/>
+                                </div>
+                                <div class="tl-stat-value"><t t-esc="active_trips or 0"/></div>
+                                <div class="tl-stat-label">Active Trips</div>
+                            </div>
+                            <div class="tl-stat">
+                                <div class="tl-stat-icon" style="background: rgba(59,130,246,0.2); color: #3b82f6;">
+                                    <i class="fa-solid fa-location-dot"/>
+                                </div>
+                                <div class="tl-stat-value"><t t-esc="cities_count or 0"/></div>
+                                <div class="tl-stat-label">Cities</div>
+                            </div>
+                            <div class="tl-stat">
+                                <div class="tl-stat-icon" style="background: rgba(139,92,246,0.2); color: #8b5cf6;">
+                                    <i class="fa-solid fa-wallet"/>
+                                </div>
+                                <div class="tl-stat-value">₹<t t-esc="total_budget_sum or 0"/></div>
+                                <div class="tl-stat-label">Total Budget</div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- C. Upcoming Trips -->
+                    <section style="margin-top: 32px;">
+                        <h2 class="section-title">Upcoming Trips</h2>
+                        <div class="tl-trip-scroll">
+                            <t t-foreach="trips or []" t-as="trip">
+                                <t t-if="trip.status != 'completed'">
+                                    <div class="tl-trip-card">
+                                        <div t-attf-class="tl-trip-cover cover-#{trip.status}">
+                                            <span t-attf-class="tl-badge badge-#{trip.status}"
+                                                  t-esc="trip.status"/>
+                                            <span>🌍</span>
+                                        </div>
+                                        <div class="tl-trip-body">
+                                            <h4 t-field="trip.trip_name"/>
+                                            <div style="font-size: 0.8rem; color: var(--muted);">
+                                                <i class="fa-regular fa-calendar"/>
+                                                <t t-esc="trip.start_date"/> — <t t-esc="trip.end_date"/>
+                                            </div>
+                                            <div class="tl-trip-meta">
+                                                <span>📍 <t t-esc="len(trip.stop_ids)"/></span>
+                                                <span>⚡ <t t-esc="len(trip.activity_ids)"/></span>
+                                                <span>🕐 <t t-esc="trip.duration_days"/>d</span>
+                                            </div>
+                                            <div class="tl-progress" t-att-data-tl-budget="1"
+                                                 t-att-data-spent="trip.total_spent"
+                                                 t-att-data-total="trip.total_budget">
+                                                <div class="tl-progress-fill"/>
+                                            </div>
+                                            <div class="tl-trip-budget-text">
+                                                ₹<t t-esc="trip.total_spent"/> spent of ₹<t t-esc="trip.total_budget"/>
+                                            </div>
+                                        </div>
+                                        <div class="tl-trip-footer">
+                                            <a t-attf-href="/traveloop/trips/#{trip.id}" class="btn-navy">View Trip</a>
+                                            <a t-attf-href="/traveloop/trips/#{trip.id}/edit" class="icon-btn" style="color: var(--muted);">
+                                                <i class="fa-solid fa-pen"/>
+                                            </a>
+                                            <button type="button" class="icon-btn" style="color: var(--muted);">
+                                                <i class="fa-solid fa-share-nodes"/>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </t>
+                            </t>
+                        </div>
+                    </section>
+
+                    <!-- D. Quick Actions -->
+                    <section>
+                        <h2 class="section-title" style="margin-top: 32px;">Quick Actions</h2>
+                        <div class="tl-quick-grid">
+                            <a href="/traveloop/trips/new" class="tl-quick">
+                                <div class="tl-quick-icon amber"><i class="fa-solid fa-plus"/></div>
+                                <div>Create Trip</div>
+                            </a>
+                            <a href="/traveloop/budget" class="tl-quick">
+                                <div class="tl-quick-icon green"><i class="fa-solid fa-receipt"/></div>
+                                <div>Add Expense</div>
+                            </a>
+                            <a href="/traveloop/checklist" class="tl-quick">
+                                <div class="tl-quick-icon blue"><i class="fa-solid fa-clipboard-list"/></div>
+                                <div>Packing List</div>
+                            </a>
+                            <a href="#" class="tl-quick">
+                                <div class="tl-quick-icon purple"><i class="fa-solid fa-share-nodes"/></div>
+                                <div>Share Trip</div>
+                            </a>
+                        </div>
+                    </section>
+
+                    <!-- E. Popular Destinations -->
+                    <section>
+                        <h2 class="section-title">Popular Destinations</h2>
+                        <div class="tl-dest-grid">
+                            <div class="tl-dest" style="background: linear-gradient(135deg,#667eea,#764ba2);">
+                                <span class="tl-dest-emoji">🗼</span>
+                                <div class="tl-dest-name">Paris 🇫🇷</div>
+                                <small style="opacity:0.85;">Cost: $$$</small>
+                            </div>
+                            <div class="tl-dest" style="background: linear-gradient(135deg,#fbb034,#ffdd00);">
+                                <span class="tl-dest-emoji">🏖️</span>
+                                <div class="tl-dest-name">Goa 🇮🇳</div>
+                                <small style="opacity:0.85;">Cost: $</small>
+                            </div>
+                            <div class="tl-dest" style="background: linear-gradient(135deg,#f093fb,#f5576c);">
+                                <span class="tl-dest-emoji">⛩️</span>
+                                <div class="tl-dest-name">Tokyo 🇯🇵</div>
+                                <small style="opacity:0.85;">Cost: $$$$</small>
+                            </div>
+                            <div class="tl-dest" style="background: linear-gradient(135deg,#43e97b,#38f9d7);">
+                                <span class="tl-dest-emoji">🌷</span>
+                                <div class="tl-dest-name">Amsterdam 🇳🇱</div>
+                                <small style="opacity:0.85;">Cost: $$$</small>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- F. Two-column section -->
+                    <section class="tl-two-col">
+                        <div class="tl-card" style="padding: 22px;">
+                            <h3 class="section-title" style="margin-top:0;">Recent Activity</h3>
+                            <ul style="list-style:none; padding:0; margin:0;">
+                                <li style="padding:10px 0; border-bottom: 1px solid var(--border);">
+                                    <strong>You created</strong> a new trip — <em>Goa Getaway</em>
+                                    <div style="font-size:0.8rem; color:var(--muted);">2 hours ago</div>
+                                </li>
+                                <li style="padding:10px 0; border-bottom: 1px solid var(--border);">
+                                    <strong>Added expense</strong> ₹2,400 — Hotel
+                                    <div style="font-size:0.8rem; color:var(--muted);">Yesterday</div>
+                                </li>
+                                <li style="padding:10px 0;">
+                                    <strong>Marked packed</strong> 5 items
+                                    <div style="font-size:0.8rem; color:var(--muted);">3 days ago</div>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div class="tl-budget-overview">
+                            <h3>Budget Overview</h3>
+                            <t t-if="latest_trip">
+                                <div class="tl-budget-row">
+                                    <span>Total Budget</span>
+                                    <strong>₹<t t-esc="latest_trip.total_budget"/></strong>
+                                </div>
+                                <div class="tl-budget-row">
+                                    <span>Total Spent</span>
+                                    <strong>₹<t t-esc="latest_trip.total_spent"/></strong>
+                                </div>
+                                <div class="tl-budget-row">
+                                    <span>Remaining</span>
+                                    <strong style="color: var(--amber);">₹<t t-esc="latest_trip.remaining_budget"/></strong>
+                                </div>
+                                <div style="margin-top:18px;">
+                                    <t t-foreach="latest_trip.expense_ids[:4]" t-as="b">
+                                        <div style="margin-bottom: 10px;">
+                                            <div style="display:flex; justify-content:space-between; font-size:0.85rem;">
+                                                <span t-esc="b.category"/>
+                                                <span>₹<t t-esc="b.amount"/></span>
+                                            </div>
+                                            <div class="tl-progress" style="background: rgba(255,255,255,0.15);">
+                                                <div class="tl-progress-fill" style="width: 60%;"/>
+                                            </div>
+                                        </div>
+                                    </t>
+                                </div>
+                            </t>
+                        </div>
+                    </section>
+                </div>
+
+                <script src="/traveloop/static/src/js/traveloop.js"/>
+            </body>
+        </t>
+    </template>
+</odoo>
